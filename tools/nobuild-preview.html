@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Boston Weekend 2026 (no-build preview)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.tailwindcss.com/3.4.14"></script>
+<script>tailwind.config = { theme: {
+    extend: {
+      colors: {
+        navy: { DEFAULT: '#14213d', 50: '#eef1f7', 100: '#d9dfec', 600: '#22345c', 700: '#1a2948', 800: '#14213d', 900: '#0d1629' },
+        harbor: '#1d4e89',
+        brick: '#a3472f',
+        cream: '#f7f2ea',
+        sand: '#ece3d4',
+        gold: '#c9a227',
+        ink: '#1f2430',
+      },
+      fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        card: '0 1px 2px rgba(20,33,61,.06), 0 6px 24px -8px rgba(20,33,61,.18)',
+        float: '0 10px 30px -10px rgba(20,33,61,.45)',
+      },
+    },
+  } };</script>
+<style type="text/tailwindcss">
+:root { color-scheme: light; -webkit-tap-highlight-color: transparent; }
+html, body, #root { height: 100%; }
+body { @apply bg-cream text-ink font-sans antialiased; overscroll-behavior-y: none; }
+button, a { touch-action: manipulation; }
+:focus-visible { outline: 3px solid #c9a227; outline-offset: 2px; border-radius: 12px; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@keyframes up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-ring { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
+.animate-up { animation: up .28s cubic-bezier(.2,.8,.2,1); }
+.animate-fade { animation: fade .2s ease-out; }
+
+/* Leaflet pins */
+.pin { width: 34px; height: 34px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); display: grid; place-items: center;
+  background: var(--c); border: 2.5px solid #fff; box-shadow: 0 4px 12px rgba(20,33,61,.35); }
+.pin > span { transform: rotate(45deg); font-size: 15px; line-height: 1; color: #fff; font-weight: 700; font-family: Inter, system-ui, sans-serif; }
+.pin.small { width: 26px; height: 26px; }
+.pin.small > span { font-size: 12px; }
+.pin.saved::after { content: '♥'; position: absolute; top: -8px; right: -8px; transform: rotate(45deg); background: #a3472f; color: #fff;
+  font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid #fff; }
+.me-dot { width: 18px; height: 18px; border-radius: 50%; background: #1a73e8; border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.15); position: relative; }
+.me-dot::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: rgba(26,115,232,.35); animation: pulse-ring 2s infinite; }
+.leaflet-container { font-family: Inter, system-ui, sans-serif; background: #ece3d4; }
+.leaflet-control-attribution { font-size: 10px; }
+
+@layer components {
+  .input { @apply w-full h-12 rounded-2xl border border-navy/15 bg-white px-4 text-[16px] text-ink; }
+}
+</style>
+<script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+<script type="importmap-shim">{ "imports": {
+  "react": "https://esm.sh/react@18.3.1",
+  "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+  "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?external=react",
+  "zustand": "https://esm.sh/zustand@4.5.5?external=react",
+  "zustand/middleware": "https://esm.sh/zustand@4.5.5/middleware?external=react",
+  "leaflet": "https://esm.sh/leaflet@1.9.4",
+  "lucide-react": "https://esm.sh/lucide-react@0.453.0?external=react",
+  "opening_hours": "https://esm.sh/opening_hours@3",
+  "leaflet/dist/leaflet.css": "data:text/javascript,export default {}",
+  "virtual:pwa-register": "data:text/javascript,export function registerSW(){}"
+}}</script>
+<script>
+window.esmsInitOptions = {
+  shimMode: true,
+  async fetch(url, opts) {
+    const u = new URL(url);
+    if (u.origin === location.origin && u.pathname.startsWith('/src/')) {
+      if (u.pathname.endsWith('.css')) return new Response('export default {}', { headers: { 'content-type': 'application/javascript' } });
+      let path = u.pathname, res = null;
+      const cands = /\.(tsx?|js)$/.test(path) ? [path] : [path + '.ts', path + '.tsx', path + '/index.ts'];
+      for (const c of cands) { const r = await fetch(c, { cache: 'no-store' }); if (r.ok) { res = r; path = c; break; } }
+      if (!res) throw new Error('Not found: ' + u.pathname);
+      const src = await res.text();
+      const out = Babel.transform(src, { filename: path, presets: [['typescript', { allExtensions: true, isTSX: path.endsWith('.tsx') }], ['react', { runtime: 'automatic' }]] }).code;
+      return new Response(out, { headers: { 'content-type': 'application/javascript' } });
+    }
+    if (u.pathname.endsWith('.css')) return new Response('export default {}', { headers: { 'content-type': 'application/javascript' } });
+    return fetch(url, opts);
+  },
+};
+</script>
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+</head><body><div id="root"></div>
+<script type="module-shim">import '/src/main.tsx';</script>
+</body></html>

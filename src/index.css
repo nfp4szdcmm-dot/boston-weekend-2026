@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; -webkit-tap-highlight-color: transparent; }
+html, body, #root { height: 100%; }
+body { @apply bg-cream text-ink font-sans antialiased; overscroll-behavior-y: none; }
+button, a { touch-action: manipulation; }
+:focus-visible { outline: 3px solid #c9a227; outline-offset: 2px; border-radius: 12px; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@keyframes up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-ring { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
+.animate-up { animation: up .28s cubic-bezier(.2,.8,.2,1); }
+.animate-fade { animation: fade .2s ease-out; }
+
+/* Leaflet pins */
+.pin { width: 34px; height: 34px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); display: grid; place-items: center;
+  background: var(--c); border: 2.5px solid #fff; box-shadow: 0 4px 12px rgba(20,33,61,.35); }
+.pin > span { transform: rotate(45deg); font-size: 15px; line-height: 1; color: #fff; font-weight: 700; font-family: Inter, system-ui, sans-serif; }
+.pin.small { width: 26px; height: 26px; }
+.pin.small > span { font-size: 12px; }
+.pin.saved::after { content: '♥'; position: absolute; top: -8px; right: -8px; transform: rotate(45deg); background: #a3472f; color: #fff;
+  font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid #fff; }
+.me-dot { width: 18px; height: 18px; border-radius: 50%; background: #1a73e8; border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.15); position: relative; }
+.me-dot::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: rgba(26,115,232,.35); animation: pulse-ring 2s infinite; }
+.leaflet-container { font-family: Inter, system-ui, sans-serif; background: #ece3d4; }
+/* Warm, slightly muted basemap to match the app palette */
+.osm-tiles { filter: saturate(.75) sepia(.12) brightness(1.02); }
+.leaflet-control-attribution { font-size: 10px; }
+
+@layer components {
+  .input { @apply w-full h-12 rounded-2xl border border-navy/15 bg-white px-4 text-[16px] text-ink; }
+}

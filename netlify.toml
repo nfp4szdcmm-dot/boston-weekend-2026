@@ -1,0 +1,5 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+# Note: the optional Google Places proxy in /api is written for Vercel.
+# On Netlify the app automatically falls back to OpenStreetMap (no key needed).
